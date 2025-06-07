@@ -1,0 +1,12 @@
+{
+  "name": "algoritm",
+  "version": "1.0.0",
+  "description": "ООО Алгоритм - Консалтинговые услуги",
+  "scripts": {
+    "build": "tailwindcss -i ./src/input.css -o ./public/css/style.css --minify",
+    "watch": "tailwindcss -i ./src/input.css -o ./public/css/style.css --watch"
+  },
+  "dependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}
