@@ -2,6 +2,8 @@
 require_once 'config/database.php';
 require_once 'includes/functions.php';
 require_once 'includes/public_check.php';
+require_once 'includes/db.php';
+require_once 'includes/helpers.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -53,7 +55,7 @@ try {
                         <p class="text-gray-600 dark:text-gray-300 mb-4"><?php echo htmlspecialchars($service['brief_description']); ?></p>
                         <div class="flex justify-between items-center">
                             <span class="text-2xl font-bold text-gray-900 dark:text-white"><?php echo number_format($service['price'], 0, ',', ' '); ?> ₽</span>
-                            <span class="text-gray-500 dark:text-gray-400"><?php echo htmlspecialchars($service['duration_days']); ?> дней</span>
+                            <span class="text-gray-500 dark:text-gray-400"><?php echo getDaysWordForm($service['duration_days']); ?></span>
                         </div>
                         <div class="flex flex-col sm:flex-row gap-2 mt-4">
                             <?php if (isLoggedIn()): ?>
@@ -106,7 +108,7 @@ try {
                     'content' => '<p class="mb-4">'.htmlspecialchars($service['full_description']).'</p>'
                         .'<div class="flex justify-between items-center">'
                         .'<span class="text-2xl font-bold">'.number_format($service['price'], 0, ',', ' ').' ₽</span>'
-                        .'<span class="text-gray-500">'.$service['duration_days'].' дней</span>'
+                        .'<span class="text-gray-500">'.getDaysWordForm($service['duration_days']).'</span>'
                         .'</div>'
                 ];
             }

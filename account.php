@@ -192,9 +192,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                                     <p class="text-lg font-bold"><?php echo number_format($order['total_price'], 0, ',', ' '); ?> ₽</p>
                                     <div class="flex space-x-2">
                                         <?php if ($order['status'] === 'pending'): ?>
-                                            <a href="payment.php?order_id=<?php echo $order['id']; ?>" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all">
-                                                Оплатить
-                                            </a>
                                             <form method="POST" class="inline">
                                                 <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                                                 <input type="hidden" name="order_id" value="<?php echo $order['id']; ?>">

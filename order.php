@@ -2,6 +2,8 @@
 require_once 'config/database.php';
 require_once 'includes/functions.php';
 require_once 'includes/session_check.php';
+require_once 'includes/db.php';
+require_once 'includes/helpers.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -135,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div class="flex justify-between items-center">
                                     <div>
                                         <p class="text-gray-600 dark:text-gray-400">
-                                            Срок выполнения: <?php echo htmlspecialchars($service['duration_days']); ?> дней
+                                            Срок выполнения: <?php echo getDaysWordForm($service['duration_days']); ?>
                                         </p>
                                     </div>
                                     <div class="text-right">

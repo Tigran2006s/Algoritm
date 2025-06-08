@@ -2,6 +2,8 @@
 require_once 'config/database.php';
 require_once 'includes/functions.php';
 require_once 'includes/session_check.php';
+require_once 'includes/db.php';
+require_once 'includes/helpers.php';
 
 requireAdmin();
 
@@ -198,7 +200,7 @@ $orders = getAllOrders($pdo);
                                         <div class="text-sm text-gray-500 dark:text-gray-400"><?php echo number_format($service['price'], 0, ',', ' '); ?> ₽</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-500 dark:text-gray-400"><?php echo $service['duration_days']; ?> дней</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400"><?php echo getDaysWordForm($service['duration_days']); ?></div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <button onclick="editService(<?php echo htmlspecialchars(json_encode($service)); ?>)" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3">Редактировать</button>
