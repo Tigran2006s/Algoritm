@@ -2,7 +2,6 @@
 require_once 'config/database.php';
 require_once 'includes/functions.php';
 require_once 'includes/session_check.php';
-require_once 'includes/db.php';
 require_once 'includes/helpers.php';
 
 requireAdmin();
@@ -158,7 +157,25 @@ $orders = getAllOrders($pdo);
 </head>
 <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
 
-    <?php include 'includes/header.php'; ?>
+    <header class="fixed w-full bg-white dark:bg-gray-900 shadow-sm z-50">
+        <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold">Алгоритм</a>
+            <div class="flex items-center space-x-4">
+                <button id="themeToggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all" title="Сменить тему">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path class="dark:hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        <path class="hidden dark:block" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                </button>
+                <form method="POST" action="logout.php" style="display:inline;">
+                    <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 transition-all">
+                        Выйти
+                    </button>
+                </form>
+            </div>
+        </nav>
+    </header>
 
     <main class="pt-24 pb-20 px-4 lg:pt-32">
         <div class="container mx-auto">
@@ -216,7 +233,7 @@ $orders = getAllOrders($pdo);
                             </tbody>
                         </table>
                     </div>
-                    <button onclick="showAddServiceModal()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">Добавить услугу</button>
+                    <button onclick="document.getElementById('serviceModal').classList.remove('hidden');document.getElementById('serviceModal').classList.add('flex');" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">Добавить услугу</button>
                 </div>
             </section>
 
@@ -423,7 +440,7 @@ $orders = getAllOrders($pdo);
         <div class="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-2xl w-full mx-4">
             <div class="flex justify-between items-start mb-6">
                 <h3 id="modalTitle" class="text-2xl font-bold"></h3>
-                <button onclick="closeServiceModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                <button type="button" onclick="document.getElementById('serviceModal').classList.add('hidden');document.getElementById('serviceModal').classList.remove('flex');" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -462,7 +479,7 @@ $orders = getAllOrders($pdo);
                 </div>
                 
                 <div class="flex justify-end space-x-4">
-                    <button type="button" onclick="closeServiceModal()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">Отмена</button>
+                    <button type="button" onclick="document.getElementById('serviceModal').classList.add('hidden');document.getElementById('serviceModal').classList.remove('flex');" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">Отмена</button>
                     <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all">Сохранить</button>
                 </div>
             </form>
@@ -470,61 +487,7 @@ $orders = getAllOrders($pdo);
     </div>
 
     <script>
-        // Мобильное меню
-        const mobileMenuButton = document.getElementById('mobileMenuButton');
-        const closeMobileMenu = document.getElementById('closeMobileMenu');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const overlay = document.createElement('div');
-        overlay.className = 'mobile-menu-overlay fixed inset-0 bg-black bg-opacity-50 z-30';
-        document.body.appendChild(overlay);
-
-        function toggleMobileMenu() {
-            mobileMenu.classList.toggle('active');
-            overlay.classList.toggle('active');
-            document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
-        }
-
-        function closeMenu() {
-            mobileMenu.classList.remove('active');
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        mobileMenuButton.addEventListener('click', toggleMobileMenu);
-        closeMobileMenu.addEventListener('click', closeMenu);
-        overlay.addEventListener('click', closeMenu);
-
-        // Закрытие меню при изменении ориентации устройства
-        window.addEventListener('orientationchange', function() {
-            if (window.innerWidth > 1024) {
-                closeMenu();
-            }
-        });
-
-        // Закрытие меню при изменении размера окна
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 1024) {
-                closeMenu();
-            }
-        });
-
-        // Плавная прокрутка к секциям
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                    if (window.innerWidth <= 1024) {
-                        closeMenu();
-                    }
-                }
-            });
-        });
-
-        // Тема
+        // Theme Toggle
         const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
         
@@ -545,15 +508,6 @@ $orders = getAllOrders($pdo);
         const serviceForm = document.getElementById('serviceForm');
         const serviceId = document.getElementById('serviceId');
 
-        function showAddServiceModal() {
-            modalTitle.textContent = 'Добавить услугу';
-            serviceForm.reset();
-            serviceForm.action.value = 'add_service';
-            serviceId.value = '';
-            serviceModal.classList.remove('hidden');
-            serviceModal.classList.add('flex');
-        }
-
         function editService(service) {
             modalTitle.textContent = 'Редактировать услугу';
             serviceForm.action.value = 'edit_service';
@@ -565,11 +519,6 @@ $orders = getAllOrders($pdo);
             document.getElementById('duration_days').value = service.duration_days;
             serviceModal.classList.remove('hidden');
             serviceModal.classList.add('flex');
-        }
-
-        function closeServiceModal() {
-            serviceModal.classList.add('hidden');
-            serviceModal.classList.remove('flex');
         }
 
         // Обработка отправки формы услуги
@@ -596,14 +545,16 @@ $orders = getAllOrders($pdo);
         // Закрытие модального окна при клике вне его
         serviceModal.addEventListener('click', function(e) {
             if (e.target === serviceModal) {
-                closeServiceModal();
+                document.getElementById('serviceModal').classList.add('hidden');
+                document.getElementById('serviceModal').classList.remove('flex');
             }
         });
 
         // Закрытие модального окна при нажатии Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && !serviceModal.classList.contains('hidden')) {
-                closeServiceModal();
+                document.getElementById('serviceModal').classList.add('hidden');
+                document.getElementById('serviceModal').classList.remove('flex');
             }
         });
     </script>

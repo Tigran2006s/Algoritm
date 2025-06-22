@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php include 'includes/footer.php'; ?>
 
     <script>
-        // Theme Toggle
+        // Переключение темы
         const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
         

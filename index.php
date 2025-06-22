@@ -2,7 +2,6 @@
 require_once 'config/database.php';
 require_once 'includes/functions.php';
 require_once 'includes/public_check.php';
-require_once 'includes/db.php';
 require_once 'includes/helpers.php';
 
 
@@ -255,7 +254,7 @@ try {
 
     <script>
 
-        // FAQ Accordion
+        // Аккордеон FAQ
         document.querySelectorAll('.faq-toggle').forEach(button => {
             button.addEventListener('click', () => {
                 const targetId = button.getAttribute('data-target');
@@ -267,7 +266,7 @@ try {
             });
         });
 
-        // Service Modal
+        // Модальное окно услуги
         const serviceModal = document.getElementById('serviceModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalContent = document.getElementById('modalContent');
@@ -336,18 +335,34 @@ try {
             chatInput.value = '';
 
             try {
-                console.log('Отправка запроса:', message); // Отладочная информация
-                const response = await fetch('chatbot.php', {
+                const baseUrl = window.location.origin;
+                const chatUrl = `${baseUrl}/OOO_Algoritm_2/chatbot.php`;
+                console.log('Base URL:', baseUrl);
+                console.log('Chat URL:', chatUrl);
+                console.log('Отправка запроса:', message);
+                
+                const response = await fetch(chatUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify({ message }),
                 });
 
-                console.log('Получен ответ:', response); // Отладочная информация
-                const data = await response.json();
-                console.log('Данные ответа:', data); // Отладочная информация
+                console.log('Статус ответа:', response.status);
+                console.log('Заголовки ответа:', response.headers);
+                
+                const responseText = await response.text();
+                console.log('Текст ответа:', responseText);
+                
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    console.error('Ошибка парсинга JSON:', e);
+                    throw new Error('Неверный формат ответа от сервера');
+                }
                 
                 if (data.reply) {
                     addMessage(data.reply, 'bot');

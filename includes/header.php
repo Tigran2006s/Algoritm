@@ -3,10 +3,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Determine if the current page is the admin panel
+// Определяем, является ли текущая страница панелью администратора
 $isAdminPanel = (basename($_SERVER['PHP_SELF']) === 'admin-panel.php');
 
-// Ensure generateCSRFToken is available if needed
+// Убеждаемся, что функция generateCSRFToken доступна при необходимости
 if (!$isAdminPanel || (isset($_SESSION['user_id']) && $isAdminPanel)) {
     require_once 'includes/functions.php';
 }
@@ -17,7 +17,7 @@ if (!$isAdminPanel || (isset($_SESSION['user_id']) && $isAdminPanel)) {
         <!-- Logo -->
         <a href="<?php echo $isAdminPanel ? 'admin-panel.php' : 'index.php'; ?>" class="text-2xl font-bold"><?php echo $isAdminPanel ? 'Алгоритм - Админ-панель' : 'Алгоритм'; ?></a>
         
-        <?php if (!$isAdminPanel): // Show regular navigation and right section only on non-admin pages ?>
+        <?php if (!$isAdminPanel): // Показываем обычную навигацию и правую секцию только на не-админских страницах ?>
             <!-- Desktop Navigation Links -->
             <div class="hidden md:flex flex-grow justify-center items-center space-x-8">
                 <a href="services.php" class="hover:text-gray-600 dark:hover:text-gray-300 transition-all">Услуги</a>
@@ -47,7 +47,7 @@ if (!$isAdminPanel || (isset($_SESSION['user_id']) && $isAdminPanel)) {
                     <a href="register.php" class="px-4 py-2 rounded-lg border border-gray-900 dark:border-white text-gray-900 dark:text-white hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-gray-900 transition-all">Регистрация</a>
                 <?php endif; ?>
             </div>
-        <?php else: // On admin panel, show only Logout button ?>
+        <?php else: // На панели администратора показываем только кнопку выхода ?>
             <div class="flex items-center space-x-4">
                 <form method="POST" action="logout.php" class="inline">
                     <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
@@ -56,7 +56,7 @@ if (!$isAdminPanel || (isset($_SESSION['user_id']) && $isAdminPanel)) {
             </div>
         <?php endif; ?>
 
-        <?php if (!$isAdminPanel): // Show mobile menu button and theme toggle only on non-admin pages ?>
+        <?php if (!$isAdminPanel): // Показываем кнопку мобильного меню и переключатель темы только на не-админских страницах ?>
         <!-- Mobile menu button and theme toggle (visible on small screens) -->
         <div class="flex items-center space-x-4 md:hidden">
              <!-- Theme Toggle for mobile header -->
@@ -114,37 +114,37 @@ if (!$isAdminPanel || (isset($_SESSION['user_id']) && $isAdminPanel)) {
 </header>
 
 <script>
-    // Theme toggle functionality
-    // Use a single event listener for the desktop theme toggle as it has a unique ID
+    // Функциональность переключения темы
+    // Используем один обработчик событий для десктопного переключателя темы, так как у него уникальный ID
     const themeToggleDesktop = document.getElementById('themeToggle');
     const html = document.documentElement;
 
-    // Apply initial theme based on localStorage or system preference
+    // Применяем начальную тему на основе localStorage или системных предпочтений
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         html.classList.add('dark');
     } else {
         html.classList.remove('dark');
     }
 
-    // Function to toggle theme and save preference
+    // Функция для переключения темы и сохранения предпочтений
     function toggleTheme() {
         html.classList.toggle('dark');
         localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
     }
 
-    // Add event listener to the desktop toggle button if it exists
+    // Добавляем обработчик событий к десктопной кнопке переключения, если она существует
     if (themeToggleDesktop) {
         themeToggleDesktop.addEventListener('click', toggleTheme);
     }
 
-    // Mobile menu functionality
+    // Функциональность мобильного меню
     const mobileMenuButton = document.getElementById('mobileMenuButton');
     const closeMobileMenu = document.getElementById('closeMobileMenu');
     const mobileMenu = document.getElementById('mobileMenu');
     const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
-    const themeToggleMobile = document.getElementById('themeToggleMobile'); // Get mobile theme toggle button
+    const themeToggleMobile = document.getElementById('themeToggleMobile'); // Получаем кнопку переключения темы для мобильных устройств
 
-    // Only initialize mobile menu and its elements if they exist (i.e., not on admin panel)
+    // Инициализируем мобильное меню и его элементы только если они существуют (т.е. не на панели администратора)
     if (mobileMenuButton && closeMobileMenu && mobileMenu && mobileMenuOverlay) {
         function toggleMobileMenu() {
             mobileMenu.classList.toggle('-translate-x-full');
@@ -164,28 +164,28 @@ if (!$isAdminPanel || (isset($_SESSION['user_id']) && $isAdminPanel)) {
         closeMobileMenu.addEventListener('click', closeMenu);
         mobileMenuOverlay.addEventListener('click', closeMenu);
 
-        // Close menu on link click (for smooth scrolling) - adjusted to find links inside the mobile menu
+        // Закрываем меню при клике на ссылку (для плавной прокрутки) - настроено для поиска ссылок внутри мобильного меню
         document.querySelectorAll('#mobileMenu a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
-                // No preventDefault here, allow normal link behavior
+                // Не используем preventDefault здесь, позволяем нормальное поведение ссылок
                 closeMenu();
             });
         });
 
-        // Close menu on orientation change and window resize for larger screens
+        // Закрываем меню при изменении ориентации и изменении размера окна для больших экранов
         window.addEventListener('orientationchange', function() {
-            if (window.innerWidth >= 768) { // md breakpoint
+            if (window.innerWidth >= 768) { // точка перелома md
                 closeMenu();
             }
         });
 
         window.addEventListener('resize', function() {
-            if (window.innerWidth >= 768) { // md breakpoint
+            if (window.innerWidth >= 768) { // точка перелома md
                 closeMenu();
             }
         });
 
-        // Initialize mobile theme toggle listener here as it's inside the mobile menu div
+        // Инициализируем обработчик переключения темы для мобильных устройств здесь, так как он находится внутри div мобильного меню
         if (themeToggleMobile) {
             themeToggleMobile.addEventListener('click', toggleTheme);
         }
